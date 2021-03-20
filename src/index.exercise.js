@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom'
 
 import {Logo} from './components/logo'
 
-// 🐨 create an App component here and render the logo, the title ("Bookshelf"), a login button, and a register button.
-// 🐨 for fun, you can add event handlers for both buttons to alert that the button was clicked
-
 const App = () => {
   const handleClick = alertMessage => event => {
     console.log(event)
