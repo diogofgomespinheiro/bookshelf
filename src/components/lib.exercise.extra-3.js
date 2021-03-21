@@ -1,7 +1,15 @@
 import styled from '@emotion/styled'
+import {keyframes} from '@emotion/core'
 import {Dialog as ReachDialog} from '@reach/dialog'
+
+import {FaSpinner} from 'react-icons/fa'
 import * as colors from '../styles/colors'
 import * as mq from '../styles/media-queries'
+
+const spin = keyframes`
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+`
 
 const buttonVariants = {
   primary: {
@@ -35,6 +43,14 @@ const FormGroup = styled.div`
   flex-direction: column;
 `
 
+const Spinner = styled(FaSpinner)`
+  margin: 0 5px;
+  animation: ${spin} 1s linear infinite;
+`
+Spinner.defaultProps = {
+  'aria-label': 'loading',
+}
+
 const CircleButton = styled.button({
   borderRadius: '30px',
   padding: '0',
@@ -62,4 +78,4 @@ const Dialog = styled(ReachDialog)({
   },
 })
 
-export {Button, CircleButton, Dialog, Input, FormGroup}
+export {Button, CircleButton, Dialog, Input, FormGroup, Spinner}
