@@ -1,6 +1,6 @@
 // no final
 
-export * from './api-client.exercise'
+export * from './api-client.exercise.extra-1'
 
 // 💯 Load the user's data on page load
 // export * from './api-client.extra-1'
