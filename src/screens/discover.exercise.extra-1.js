@@ -1,47 +1,23 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
-
 import * as React from 'react'
 import Tooltip from '@reach/tooltip'
 import {FaSearch, FaTimes} from 'react-icons/fa'
-import {useQuery} from 'react-query'
-import {client} from 'utils/api-client'
+
+import {useBookSearch} from 'utils/books'
+
 import * as colors from 'styles/colors'
+
 import {BookRow} from 'components/book-row'
 import {BookListUL, Spinner, Input} from 'components/lib'
-import bookPlaceholderSvg from 'assets/book-placeholder.svg'
-
-const loadingBook = {
-  title: 'Loading...',
-  author: 'loading...',
-  coverImageUrl: bookPlaceholderSvg,
-  publisher: 'Loading Publishing',
-  synopsis: 'Loading...',
-  loadingBook: true,
-}
-
-const loadingBooks = Array.from({length: 10}, (v, index) => ({
-  id: `loading-book-${index}`,
-  ...loadingBook,
-}))
-
-const getBooks = (user, query) => async () => {
-  const result = await client(`books?query=${encodeURIComponent(query)}`, {
-    token: user.token,
-  })
-  return result.books
-}
 
 function DiscoverBooksScreen({user}) {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
-  const {
-    data: books = loadingBooks,
-    error,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useQuery(['bookSearch', {query}], getBooks(user, query))
+  const {books, error, isLoading, isError, isSuccess} = useBookSearch(
+    query,
+    user,
+  )
 
   function handleSearchSubmit(event) {
     event.preventDefault()

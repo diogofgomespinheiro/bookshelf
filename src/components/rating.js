@@ -1,6 +1,6 @@
 // export * from './rating.final'
 
-export * from './rating.exercise'
+export * from './rating.exercise.extra-1'
 
 // 💯 Make hooks
 // export * from './rating.extra-1'

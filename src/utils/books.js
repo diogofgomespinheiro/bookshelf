@@ -1,6 +1,6 @@
 // no final
 
-export * from './books.exercise'
+export * from './books.exercise.extra-1'
 
 // 💯 Make hooks
 // export * from './books.extra-1'
