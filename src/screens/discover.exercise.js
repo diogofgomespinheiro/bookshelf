@@ -4,8 +4,7 @@ import {jsx} from '@emotion/core'
 import * as React from 'react'
 import Tooltip from '@reach/tooltip'
 import {FaSearch, FaTimes} from 'react-icons/fa'
-// 🐨 you'll need useQuery from 'react-query'
-import {useAsync} from 'utils/hooks'
+import {useQuery} from 'react-query'
 import {client} from 'utils/api-client'
 import * as colors from 'styles/colors'
 import {BookRow} from 'components/book-row'
@@ -26,27 +25,25 @@ const loadingBooks = Array.from({length: 10}, (v, index) => ({
   ...loadingBook,
 }))
 
+const getBooks = (user, query) => async () => {
+  const result = await client(`books?query=${encodeURIComponent(query)}`, {
+    token: user.token,
+  })
+  return result.books
+}
+
 function DiscoverBooksScreen({user}) {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
-  // 🐨 replace this useAsync call with a useQuery call to handle the book search
-  // the queryKey should be ['bookSearch', {query}]
-  // the queryFn should be the same thing we have in the run function below
-  // you'll get back the same stuff you get from useAsync, (except the run function)
-  const {data, error, run, isLoading, isError, isSuccess} = useAsync()
+  const {
+    data: books = loadingBooks,
+    error,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useQuery(['bookSearch', {query}], getBooks(user, query))
 
-  const books = data ?? loadingBooks
-
-  React.useEffect(() => {
-    if (!queried) {
-      return
-    }
-    run(
-      client(`books?query=${encodeURIComponent(query)}`, {
-        token: user.token,
-      }).then(data => data.books),
-    )
-  }, [query, queried, run, user.token])
+  console.log(books)
 
   function handleSearchSubmit(event) {
     event.preventDefault()
@@ -84,7 +81,6 @@ function DiscoverBooksScreen({user}) {
           </label>
         </Tooltip>
       </form>
-
       {isError ? (
         <div css={{color: colors.danger}}>
           <p>There was an error:</p>
@@ -110,19 +106,17 @@ function DiscoverBooksScreen({user}) {
           </div>
         )}
       </div>
-      {isSuccess ? (
-        books.length ? (
-          <BookListUL css={{marginTop: 20}}>
-            {books.map(book => (
-              <li key={book.id} aria-label={book.title}>
-                <BookRow user={user} key={book.id} book={book} />
-              </li>
-            ))}
-          </BookListUL>
-        ) : (
-          <p>No books found. Try another search.</p>
-        )
-      ) : null}
+      {books.length ? (
+        <BookListUL css={{marginTop: 20}}>
+          {books.map(book => (
+            <li key={book.id} aria-label={book.title}>
+              <BookRow user={user} key={book.id} book={book} />
+            </li>
+          ))}
+        </BookListUL>
+      ) : (
+        <p>No books found. Try another search.</p>
+      )}
     </div>
   )
 }
