@@ -1,6 +1,6 @@
 // export * from './modal.final'
 
-export * from './modal.exercise'
+export * from './modal.exercise.extra-2'
 
 // 💯 Add `callAll`
 // export * from './modal.extra-1'
