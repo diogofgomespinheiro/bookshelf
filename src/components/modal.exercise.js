@@ -1,7 +1,9 @@
 // 🐨 you're going to need the Dialog component
 // It's just a light wrapper around ReachUI Dialog
 // 📜 https://reacttraining.com/reach-ui/dialog/
-// import {Dialog} from './lib'
+import * as React from 'react'
+
+import {Dialog} from './lib'
 
 // 💰 Here's a reminder of how your components will be used:
 /*
@@ -19,27 +21,49 @@
 </Modal>
 */
 
-// we need this set of compound components to be structurally flexible
-// meaning we don't have control over the structure of the components. But
-// we still want to have implicitly shared state, so...
-// 🐨 create a ModalContext here with React.createContext
+const ModalContext = React.createContext()
+ModalContext.displayName = 'ModalContext'
 
-// 🐨 create a Modal component that manages the isOpen state (via useState)
-// and renders the ModalContext.Provider with the value which will pass the
-// isOpen state and setIsOpen function
+const useModalContext = component => {
+  const context = React.useContext(ModalContext)
 
-// 🐨 create a ModalDismissButton component that accepts children which will be
-// the button which we want to clone to set it's onClick prop to trigger the
-// modal to close
-// 📜 https://reactjs.org/docs/react-api.html#cloneelement
-// 💰 to get the setIsOpen function you'll need, you'll have to useContext!
-// 💰 keep in mind that the children prop will be a single child (the user's button)
+  if (context === undefined) {
+    throw new Error(`${component} must be used within a Modal`)
+  }
+  return context
+}
 
-// 🐨 create a ModalOpenButton component which is effectively the same thing as
-// ModalDismissButton except the onClick sets isOpen to true
+const Modal = ({children, isInitialOpen = false}) => {
+  const [isOpen, setIsOpen] = React.useState(isInitialOpen)
 
-// 🐨 create a ModalContents component which renders the Dialog.
-// Set the isOpen prop and the onDismiss prop should set isOpen to close
-// 💰 be sure to forward along the rest of the props (especially children).
+  const open = () => setIsOpen(true)
+  const close = () => setIsOpen(false)
 
-// 🐨 don't forget to export all the components here
+  const value = {isOpen, open, close}
+
+  return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>
+}
+
+const ModalDismissButton = ({children}) => {
+  const {close} = useModalContext('ModalDismissButton')
+
+  return React.cloneElement(children, {onClick: close})
+}
+
+const ModalOpenButton = ({children}) => {
+  const {open} = useModalContext('ModalOpenButton')
+
+  return React.cloneElement(children, {onClick: open})
+}
+
+const ModalContents = ({children, ...props}) => {
+  const {isOpen, close} = useModalContext('ModalContents')
+
+  return (
+    <Dialog isOpen={isOpen} onDismiss={close} {...props}>
+      {children}
+    </Dialog>
+  )
+}
+
+export {Modal, ModalDismissButton, ModalOpenButton, ModalContents}
