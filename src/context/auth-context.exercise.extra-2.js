@@ -55,7 +55,7 @@ function AuthProvider(props) {
     setData(null)
   }, [setData])
 
-  const value = React.memo(() => ({user, login, register, logout}), [
+  const value = React.useMemo(() => ({user, login, register, logout}), [
     user,
     login,
     register,

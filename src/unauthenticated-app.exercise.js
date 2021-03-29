@@ -61,6 +61,8 @@ function LoginForm({onSubmit, submitButton}) {
 
 function UnauthenticatedApp() {
   const {login, register} = useAuth()
+
+  console.log(login)
   return (
     <div
       css={{
