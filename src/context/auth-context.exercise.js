@@ -17,7 +17,7 @@ async function getUser() {
       token,
     })
     user = fetchedUser
-    queryCache.setQueryData('list-items', listItems)
+    queryCache.setQueryData('list-items', listItems, {staleTime: 5000})
   }
 
   return user
